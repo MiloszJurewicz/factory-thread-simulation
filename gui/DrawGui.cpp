@@ -4,9 +4,7 @@
 
 #include "DrawGui.h"
 #include <ncurses.h>
-#include <mutex>
 #include <cmath>
-#include "DrawGui.h"
 
 void initGui(){
 
@@ -30,27 +28,27 @@ void initGui(){
 
 
 
-void drawTool(int toolId, int isUsedBy, std::string status) {
+void drawTool(Tool* t) {
     attron(COLOR_PAIR(2));
     std::string clean = "                              ";
     int rows = 0, collumns = 0;
 
     getmaxyx(stdscr, rows, collumns);
-    std::string msg= "Toold id. " + std::to_string(toolId);
+    std::string msg= "Toold id. " + std::to_string(t->getId());
 
-    if(toolId < 4){
-        mvprintw(1, collumns/2 + ((toolId % 4) * 20 - sizeof(msg)) - 10, ("Toold id. " + std::to_string(toolId)).c_str());
-        if(isUsedBy == -1){
-            mvprintw(2, collumns/2 + ((toolId % 4) * 20 - sizeof(msg)) - 10, ("Status: " + status + "").c_str());
+    if(t->getId() < 4){
+        mvprintw(1, collumns/2 + ((t->getId() % 4) * 20 - sizeof(msg)) - 10, ("Toold id. " + std::to_string(t->getId())).c_str());
+        if(t->getFactoryWorker() == NULL){
+            mvprintw(2, collumns/2 + ((t->getId() % 4) * 20 - sizeof(msg)) - 10, ("Status: " + t->getStatus() + "").c_str());
         }else{
-            mvprintw(2, collumns/2 + ((toolId % 4) * 20 - sizeof(msg)) - 10, ("Status: " + status + "Used by: " +  std::to_string(isUsedBy)).c_str());
+            mvprintw(2, collumns/2 + ((t->getId() % 4) * 20 - sizeof(msg)) - 10, ("Status: " + t->getStatus() + "Used by: " +  std::to_string(t->getFactoryWorker()->getId())).c_str());
         }
-    }else if(toolId < 8){
-        mvprintw(4, collumns/2 + ((toolId % 4) * 20  - sizeof(msg)) - 10, ("Toold id. " + std::to_string(toolId)).c_str());
-        if(isUsedBy == -1){
-            mvprintw(5, collumns/2 + ((toolId % 4) * 20 - sizeof(msg)) - 10, ("Status: " + status + "").c_str());
+    }else if(t->getId() < 8){
+        mvprintw(4, collumns/2 + ((t->getId() % 4) * 20  - sizeof(msg)) - 10, ("Toold id. " + std::to_string(t->getId())).c_str());
+        if(t->getFactoryWorker() == NULL){
+            mvprintw(5, collumns/2 + ((t->getId() % 4) * 20 - sizeof(msg)) - 10, ("Status: " + t->getStatus() + "").c_str());
         }else{
-            mvprintw(5, collumns/2 + ((toolId % 4) * 20 - sizeof(msg)) - 10, ("Status: " + status + "Used by worker: " +  std::to_string(isUsedBy)).c_str());
+            mvprintw(5, collumns/2 + ((t->getId() % 4) * 20 - sizeof(msg)) - 10, ("Status: " + t->getStatus() + "Used by worker: " +  std::to_string(t->getFactoryWorker()->getId())).c_str());
         }
     }
 
@@ -74,4 +72,8 @@ void drawFactoryWorker(FactoryWorker* factoryWorker) {
     }
 
     refresh();
+}
+
+void drawWorkplace() {
+
 }

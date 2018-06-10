@@ -9,7 +9,7 @@
 #include "../threads/FactoryWorker.h"
 
 void initGui();
-void drawTool(int toolId, int isUsedBy, std::string status);
-void drawFactoryWorker(FactoryWorker* factoryWorker);
+void drawTool(Tool* t);
+//void drawFactoryWorker(FactoryWorker* factoryWorker);
 void drawWorkplace();
 #endif //FACTORY_THREAD_SIMULATION_DRAWGUI_H

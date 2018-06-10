@@ -7,12 +7,11 @@
 
 Tool::Tool(int id) {
     this->id = id;
-    isBeingUsed = false;
-    isUsedBy = -1;
-    status = "In toolShop";
+    this->isBeingUsed = false;
+    this->status = "In toolshop";
+    this->factoryWorker = NULL;
 
-    //drawing Tools
-    drawTool(this->id, isUsedBy, status);
+    drawTool(this);
 }
 
 int Tool::getId() const {
@@ -37,4 +36,12 @@ const std::string &Tool::getStatus() const {
 
 void Tool::setStatus(const std::string &status) {
     Tool::status = status;
+}
+
+FactoryWorker *Tool::getFactoryWorker() const {
+    return factoryWorker;
+}
+
+void Tool::setFactoryWorker(FactoryWorker *factoryWorker) {
+    Tool::factoryWorker = factoryWorker;
 }

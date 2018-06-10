@@ -6,9 +6,13 @@
 #define FACTORY_THREAD_SIMULATION_TOOL_H
 
 #include <mutex>
+#include "../threads/FactoryWorker.h"
+
+class FactoryWorker;
 
 class Tool {
 public:
+
     Tool(int id);
 
     int getId() const;
@@ -23,20 +27,21 @@ public:
 
     void setStatus(const std::string &status);
 
+    FactoryWorker *getFactoryWorker() const;
+
+    void setFactoryWorker(FactoryWorker *factoryWorker);
+
     std::mutex m;
 
 private:
-    int id;
 
-    int isUsedBy;
+    int id;
 
     bool isBeingUsed;
 
     std::string status;
 
-
-
+    FactoryWorker* factoryWorker;
 };
-
 
 #endif //FACTORY_THREAD_SIMULATION_TOOL_H

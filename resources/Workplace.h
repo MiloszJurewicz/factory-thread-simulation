@@ -6,6 +6,7 @@
 #define FACTORY_THREAD_SIMULATION_WORKPLACE_H
 
 #include <iostream>
+#include "../threads/FactoryWorker.h"
 
 class Workplace {
 public:
@@ -28,16 +29,31 @@ public:
 
     void setParts(int parts);
 
+    int getUsedBy() const;
+
+    void setUsedBy(int usedBy);
+
 private:
+
     int id;
 
     bool isTaken;
 
-    std::string status;
-
     int parts;
 
+    std::string status;
 };
 
 
 #endif //FACTORY_THREAD_SIMULATION_WORKPLACE_H
+
+/*
+//int id;
+
+bool isTaken;
+
+int parts;
+
+std::string status;
+
+FactoryWorker usedBy = NULL;*/

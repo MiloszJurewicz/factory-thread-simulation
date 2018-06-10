@@ -3,11 +3,14 @@
 //
 
 #include "Workplace.h"
+#include "../gui/DrawGui.h"
 
 Workplace::Workplace(int id) : id(id) {
     this->status = "free";
     this->isTaken = false;
     this->parts = 50;
+
+    drawWorkplace();
 }
 
 int Workplace::getId() const {
@@ -41,6 +44,7 @@ int Workplace::getParts() const {
 void Workplace::setParts(int parts) {
     Workplace::parts = parts;
 }
+
 
 
 
