@@ -6,14 +6,22 @@
 #define FACTORY_THREAD_SIMULATION_FACTORYWORKER_H
 
 
+#include <vector>
+#include "../resources/Tool.h"
 
 class FactoryWorker {
 public:
-    FactoryWorker();
+    explicit FactoryWorker(int id);
+    virtual ~FactoryWorker();
+
 private:
     int id;
-    bool isWorking;
+    bool isRunning;
     std::string status;
+
+    void routine(std::vector<Tool>);
+    void eatSandwich();
+    void work();
 };
 
 
