@@ -3,11 +3,16 @@
 //
 
 #include "Tool.h"
+#include "../gui/DrawGui.h"
 
 Tool::Tool(int id) {
     this->id = id;
     isBeingUsed = false;
-    status = "In toolShop ";
+    isUsedBy = -1;
+    status = "In toolShop";
+
+    //drawing Tools
+    drawTool(this->id, isUsedBy, status);
 }
 
 int Tool::getId() const {

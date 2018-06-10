@@ -9,19 +9,38 @@
 #include <vector>
 #include "../resources/Tool.h"
 
+using std::mutex;
+
 class FactoryWorker {
 public:
     explicit FactoryWorker(int id);
+
     virtual ~FactoryWorker();
+
+    void routine(std::mutex & _muGui);
+
+    int getId() const;
+
+    void setId(int id);
+
+    bool isIsRunning() const;
+
+    void setIsRunning(bool isRunning);
+
+    const std::string &getStatus() const;
+
+    void setStatus(const std::string &status);
 
 private:
     int id;
+
     bool isRunning;
+
     std::string status;
 
-    void routine(std::vector<Tool>);
-    void eatSandwich();
-    void work();
+    void eatSandwich(mutex & _muGui);
+
+    void work(mutex & _muGui);
 };
 
 

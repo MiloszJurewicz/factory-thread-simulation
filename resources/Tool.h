@@ -28,6 +28,8 @@ public:
 private:
     int id;
 
+    int isUsedBy;
+
     bool isBeingUsed;
 
     std::string status;

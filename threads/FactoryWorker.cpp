@@ -5,13 +5,15 @@
 #include <iostream>
 #include <thread>
 #include "FactoryWorker.h"
+#include "../gui/DrawGui.h"
 
+using std::mutex;
 std::chrono::milliseconds refreshRate(200);
 
 FactoryWorker::FactoryWorker(int id) {
     this->id = id;
-    isRunning = false;
-    status = "limbo";
+    this->isRunning = true;
+    this->status = "limbo";
 }
 
 FactoryWorker::~FactoryWorker() {
@@ -22,24 +24,57 @@ FactoryWorker::~FactoryWorker() {
     }
 }
 
-void FactoryWorker::routine(std::vector<Tool>) {
-    //draw Factory worker
+void FactoryWorker::routine(mutex & _muGui) {
+    status = "Time to work";
+
+    _muGui.lock();
+    //drawFactoryWorker(this);
+    _muGui.unlock();
 
     while(isRunning){
-
+        eatSandwich(_muGui);
+        work(_muGui);
     }
 }
 
-void FactoryWorker::eatSandwich() {
-    status = "I'm on a break";
+void FactoryWorker::eatSandwich(mutex & _muGui) {
+    this->status = "I'm on a break";
 
-    std::this_thread::sleep_for(refreshRate);
-}
-
-void FactoryWorker::work() {
-    status = "Getting tools";
-
+    _muGui.lock();
+    //drawFactoryWorker(this);
+    _muGui.unlock();
 
 }
 
+void FactoryWorker::work(mutex & _muGui) {
+    this->status = "Getting tools";
+
+    _muGui.lock();
+    //drawFactoryWorker(this);
+    _muGui.unlock();
+}
+
+int FactoryWorker::getId() const {
+    return id;
+}
+
+void FactoryWorker::setId(int id) {
+    FactoryWorker::id = id;
+}
+
+bool FactoryWorker::isIsRunning() const {
+    return isRunning;
+}
+
+void FactoryWorker::setIsRunning(bool isRunning) {
+    FactoryWorker::isRunning = isRunning;
+}
+
+const std::string &FactoryWorker::getStatus() const {
+    return status;
+}
+
+void FactoryWorker::setStatus(const std::string &status) {
+    FactoryWorker::status = status;
+}
 
