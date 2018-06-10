@@ -8,40 +8,33 @@
 #include <iostream>
 #include "../threads/FactoryWorker.h"
 
+using namespace std;
+class Tool;
+class FactoryWorker;
+
 class Workplace {
 public:
 
-    Workplace(int id);
+    Workplace(int id, const vector<Tool *> &tools);
 
     int getId() const;
 
-    void setId(int id);
+    const vector<Tool *> &getTools() const;
 
-    bool isIsTaken() const;
+    bool isTaken() const;
 
-    void setIsTaken(bool isTaken);
-
-    const std::string &getStatus() const;
-
-    void setStatus(const std::string &status);
-
-    int getParts() const;
-
-    void setParts(int parts);
-
-    int getUsedBy() const;
-
-    void setUsedBy(int usedBy);
+    void setTaken(bool taken);
 
 private:
 
     int id;
 
-    bool isTaken;
+    bool taken;
 
-    int parts;
+    FactoryWorker* fw = NULL;
 
-    std::string status;
+    vector<Tool*> tools;
+
 };
 
 

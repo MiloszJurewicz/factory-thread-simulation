@@ -8,39 +8,41 @@
 
 #include <vector>
 #include "../resources/Tool.h"
+#include "../resources/Workplace.h"
 
-using std::mutex;
+using namespace std;
+
+class Workplace;
+extern const int NUMOFWORKERS;
+extern const int REFRESHESINSECOND;
+extern const std::chrono::milliseconds REFRESHRATE;
 
 class FactoryWorker {
 public:
-    explicit FactoryWorker(int id);
+
+    FactoryWorker(int id);
 
     virtual ~FactoryWorker();
 
-    void routine(std::mutex & _muGui);
+    void routine(vector<Workplace*> workplaces, mutex & _muGui);
 
     int getId() const;
 
-    void setId(int id);
-
-    bool isIsRunning() const;
-
-    void setIsRunning(bool isRunning);
-
-    const std::string &getStatus() const;
-
-    void setStatus(const std::string &status);
-
 private:
     int id;
+    string status;
+    bool running;
 
-    bool isRunning;
-
-    std::string status;
+    Workplace *workplace = NULL;
 
     void eatSandwich(mutex & _muGui);
 
     void work(mutex & _muGui);
+
+    FactoryWorker *getFactoryWorker() const;
+
+    Workplace *lookForWorkplace(vector<Workplace *> workplaces) ;
+
 };
 
 

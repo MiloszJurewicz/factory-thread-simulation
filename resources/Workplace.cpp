@@ -5,48 +5,24 @@
 #include "Workplace.h"
 #include "../gui/DrawGui.h"
 
-Workplace::Workplace(int id) : id(id) {
-    this->status = "free";
-    this->isTaken = false;
-    this->parts = 50;
+using namespace std;
 
-    drawWorkplace();
+Workplace::Workplace(int id, const vector<Tool *> &tools) : id(id), tools(tools) {
+    this->taken = false;
 }
 
 int Workplace::getId() const {
     return id;
 }
 
-void Workplace::setId(int id) {
-    Workplace::id = id;
+const vector<Tool *> &Workplace::getTools() const {
+    return tools;
 }
 
-bool Workplace::isIsTaken() const {
-    return isTaken;
+bool Workplace::isTaken() const {
+    return taken;
 }
 
-void Workplace::setIsTaken(bool isTaken) {
-    Workplace::isTaken = isTaken;
+void Workplace::setTaken(bool taken) {
+    Workplace::taken = taken;
 }
-
-const std::string &Workplace::getStatus() const {
-    return status;
-}
-
-void Workplace::setStatus(const std::string &status) {
-    Workplace::status = status;
-}
-
-int Workplace::getParts() const {
-    return parts;
-}
-
-void Workplace::setParts(int parts) {
-    Workplace::parts = parts;
-}
-
-
-
-
-
-

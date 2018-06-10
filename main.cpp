@@ -1,21 +1,22 @@
 #include <iostream>
 #include <thread>
-#include <ncurses.h>
 #include <algorithm>
 #include <mutex>
+#include <conio.h>
 #include "resources/Tool.h"
 #include "resources/Workplace.h"
 #include "gui/DrawGui.h"
 
-using std::thread;
-using std::vector;
-using std::ref;
-using std::mutex;
+using namespace std;
 
-const static int NUMOFWORKERS = 4;
-const static int NUMOFWORKPLACES = 4;
-const static int NUMOFTOOLS = NUMOFWORKERS * 2;
+const int NUMOFWORKERS = 4;
+const int NUMOFWORKPLACES = 4;
+const int NUMOFTOOLS = NUMOFWORKERS * 2;
+const int MILISECONDS = 200;
+const std::chrono::milliseconds REFRESHRATE(MILISECONDS);
+const int REFRESHESINSECOND= 1000/MILISECONDS;
 mutex _muGUI;
+
 
 void stopThreadsTimer(vector<FactoryWorker *> workers){
 
@@ -24,52 +25,62 @@ void stopThreadsTimer(vector<FactoryWorker *> workers){
     //std::this_thread::sleep_for(runTimer);
     getch();
 
-    for(int i = 0; i < workers.size(); i++){
+    /*for(int i = 0; i < workers.size(); i++){
         workers.at(i)->setIsRunning(false);
-    }
+    }*/
 }
 
 int main() {
 
-    initGui();
+    srand (time(NULL));
 
-    //creating proper amount of tools
-    vector<Tool*>tools(NUMOFWORKERS);
-    for(int i = 0 ; i < NUMOFTOOLS; i++){
+    //Vector of tool pointers
+    vector<Tool*> tools;
+    for(int i = 0; i < NUMOFTOOLS; i++){
         auto *t1 = new Tool(i);
         tools.push_back(t1);
     }
 
-    //creating workplaces
+
+    //setting worker at tool
+    //tools.at(0)->setFactoryWorker(&fn);
+
+    vector<Workplace*> workplaces;
     for(int i = 0; i < NUMOFWORKPLACES; i++){
-        auto *w = new Workplace(i);
+
+        vector<Tool*> subTools;
+        if(i == NUMOFWORKPLACES - 1){
+            subTools.push_back( tools.at(i) );
+            subTools.push_back( tools.at(i + 1) );
+            subTools.push_back( tools.at(0) );
+
+            Workplace *w = new Workplace(i, subTools);
+            workplaces.push_back(w);
+        }else{
+            subTools.push_back( tools.at(i) );
+            subTools.push_back( tools.at(i + 1) );
+            subTools.push_back( tools.at(i + 2) );
+
+            Workplace *w = new Workplace(i, subTools);
+            workplaces.push_back(w);
+        }
     }
 
+    vector<thread> tasks(NUMOFWORKERS);
 
-
-    /*vector<thread> tasks(NUMOFWORKERS);
-    vector<FactoryWorker*> workers;
-
-    for(int i = 0; i < NUMOFWORKERS; i++) {
+    for(int i = 0; i < NUMOFWORKERS; i++){
         FactoryWorker *f = new FactoryWorker(i);
-        workers.push_back(f);
 
         tasks[i] = (thread(&FactoryWorker::routine,
                            f,
+                           ref(workplaces),
                            ref(_muGUI))
-        );
+            );
+
     }
 
-    for(int i = 0; i < tasks.size(); i++){
-        stopThreadsTimer(workers);
-        tasks.at(i).join();
-    }*/
 
     getch();
-
-    curs_set(FALSE);
-    endwin();
-
 
     return 0;
 }

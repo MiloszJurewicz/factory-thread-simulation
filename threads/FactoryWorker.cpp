@@ -7,74 +7,109 @@
 #include "FactoryWorker.h"
 #include "../gui/DrawGui.h"
 
-using std::mutex;
-std::chrono::milliseconds refreshRate(200);
+using namespace std;
 
-FactoryWorker::FactoryWorker(int id) {
-    this->id = id;
-    this->isRunning = true;
-    this->status = "limbo";
+FactoryWorker::FactoryWorker(int id) : id(id) {
+    running = true;
 }
 
 FactoryWorker::~FactoryWorker() {
     try{
         std::terminate();
     }catch(std::exception& e){
-
+        e.what();
     }
-}
-
-void FactoryWorker::routine(mutex & _muGui) {
-    status = "Time to work";
-
-    _muGui.lock();
-    //drawFactoryWorker(this);
-    _muGui.unlock();
-
-    while(isRunning){
-        eatSandwich(_muGui);
-        work(_muGui);
-    }
-}
-
-void FactoryWorker::eatSandwich(mutex & _muGui) {
-    this->status = "I'm on a break";
-
-    _muGui.lock();
-    //drawFactoryWorker(this);
-    _muGui.unlock();
-
-}
-
-void FactoryWorker::work(mutex & _muGui) {
-    this->status = "Getting tools";
-
-    _muGui.lock();
-    //drawFactoryWorker(this);
-    _muGui.unlock();
 }
 
 int FactoryWorker::getId() const {
     return id;
 }
 
-void FactoryWorker::setId(int id) {
-    FactoryWorker::id = id;
+void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
+    //starting work
+    status = "Starting work";
+
+
+    while(running){
+        //mutex here
+        workplace = lookForWorkplace(workplaces);
+        //end of mutex
+        if(workplace != NULL){
+
+            work(_muGui);
+
+            eatSandwich(_muGui);
+
+        }else{
+            eatSandwich(_muGui);
+        }
+    }
+
+
 }
 
-bool FactoryWorker::isIsRunning() const {
-    return isRunning;
+Workplace* FactoryWorker::lookForWorkplace(vector<Workplace *> workplaces) {
+
+    vector<Workplace*> freeWorkplaces;
+    for (int i = 0; i < workplaces.size(); i++){
+        if(!workplaces.at(i)->isTaken()){
+            freeWorkplaces.push_back(workplaces[i]);
+        }
+    }
+    if(freeWorkplaces.size() == 0){
+        return NULL;
+    }else{
+        int c = rand() % freeWorkplaces.size() + 0;
+        freeWorkplaces.at(c)->setTaken(true);
+        return freeWorkplaces.at(c);
+    }
+
+
 }
 
-void FactoryWorker::setIsRunning(bool isRunning) {
-    FactoryWorker::isRunning = isRunning;
+void FactoryWorker::work(mutex &_muGui) {
+
+    status = "Getting tools";
+    //Draw Worker
+
+    //Ensures there are no deadlocks
+    lock(workplace->getTools().at(0)->m, workplace->getTools().at(1)->m, workplace->getTools().at(2)->m);
+
+    //Draw pick up tool
+    lock_guard<mutex> a(workplace->getTools().at(0)->m, adopt_lock);
+    workplace->getTools().at(0)->setFactoryWorker(this);
+
+    lock_guard<mutex> b(workplace->getTools().at(1)->m, adopt_lock);
+    workplace->getTools().at(1)->setFactoryWorker(this);
+
+    lock_guard<mutex> c(workplace->getTools().at(2)->m, adopt_lock);
+    workplace->getTools().at(2)->setFactoryWorker(this);
+
+    status = "working";
+    int workingTime = 3 + (rand() % (6 - 3 + 1));
+    for(int i = 0; i < workingTime * REFRESHESINSECOND; i++){
+        this_thread::sleep_for(REFRESHRATE);
+
+    }
+    workplace->setTaken(false);
+
+    cout << "Factoryworker: " << id << "done" << endl;
 }
 
-const std::string &FactoryWorker::getStatus() const {
-    return status;
+void FactoryWorker::eatSandwich(mutex &_muGui) {
+    status = "meditating";
+    int meditateTime = 3 + (rand() % /*static_cast<int>*/(5 - 3 + 1));
+
+    for(int i = 0; i < meditateTime * REFRESHESINSECOND; i++){
+        std::this_thread::sleep_for(REFRESHRATE);
+    }
 }
 
-void FactoryWorker::setStatus(const std::string &status) {
-    FactoryWorker::status = status;
-}
+
+
+
+
+
+
+
 
