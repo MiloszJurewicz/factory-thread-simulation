@@ -7,6 +7,7 @@
 #include <cmath>
 #include "FactoryWorker.h"
 #include "../gui/DrawGui.h"
+#include "../resources/ProductStockpille.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ FactoryWorker::~FactoryWorker() {
     }
 }
 
-void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
+void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui, ProductStockpille * productStockpille) {
     //starting work
     status = "Starting work";
 
@@ -42,7 +43,7 @@ void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
 
         if(workplace != NULL){
 
-            work(_muGui);
+            work(_muGui, productStockpille );
 
             eatSandwich(_muGui);
 
@@ -73,7 +74,7 @@ Workplace* FactoryWorker::lookForWorkplace(vector<Workplace *> workplaces) {
     }
 }
 
-void FactoryWorker::work(mutex &_muGui) {
+void FactoryWorker::work(mutex &_muGui, ProductStockpille * productStockpille) {
     
     status = "Getting tools";
     
@@ -91,14 +92,15 @@ void FactoryWorker::work(mutex &_muGui) {
         workplace->getTools().at(0)->setStatus("Claimed by: " + to_string(id));
     
         _muGui.lock();
-        drawTool(workplace->getTools().at(0));
+            drawTool(workplace->getTools().at(0));
         _muGui.unlock();
     lock_guard<mutex> b(workplace->getTools().at(1)->m, adopt_lock);
 
         workplace->getTools().at(1)->setClaimedBy(id);
         workplace->getTools().at(1)->setStatus("Claimed by: " + to_string(id));
-     _muGui.lock();
-        drawTool(workplace->getTools().at(1));
+
+        _muGui.lock();
+            drawTool(workplace->getTools().at(1));
         _muGui.unlock();    
     
     lock_guard<mutex> c(workplace->getTools().at(2)->m, adopt_lock);
@@ -107,8 +109,9 @@ void FactoryWorker::work(mutex &_muGui) {
         workplace->getTools().at(2)->setStatus("Claimed by: " + to_string(id));
     
         _muGui.lock();
-        drawTool(workplace->getTools().at(2));
+            drawTool(workplace->getTools().at(2));
         _muGui.unlock();
+
     status = "working";
     int partsPerProduct = 10;
 
@@ -121,6 +124,10 @@ void FactoryWorker::work(mutex &_muGui) {
             _muGui.unlock();
             while(workplace->getParts() == 0){
                 this_thread::sleep_for(REFRESHRATE * 5);
+                if(!running){
+                    //if programs ends skip adding products since you didnt finish
+                    goto  stop;
+                }
 
             }
         }else{
@@ -139,8 +146,16 @@ void FactoryWorker::work(mutex &_muGui) {
 
     }
 
-    //freeing up resources
+    productStockpille->m.lock();
+        productStockpille->addProduct(workplace->getId());
+    productStockpille->m.unlock();
+    _muGui.lock();
+        drawProductStockPile(productStockpille);
+    _muGui.unlock();
+    //if programs ends skip adding products since you didnt finish
+    stop:
 
+    //freeing up resources
     workplace->setTaken(false);
     workplace->setTakenBy(-1);
 

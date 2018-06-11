@@ -9,6 +9,7 @@
 #include <vector>
 #include "../resources/Tool.h"
 #include "../resources/Workplace.h"
+#include "../resources/ProductStockpille.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ public:
 
     virtual ~FactoryWorker();
 
-    void routine(vector<Workplace*> workplaces, mutex & _muGui);
+    void routine(vector<Workplace*> workplaces, mutex & _muGui, ProductStockpille * productStockpille);
 
     int getId() const;
 
@@ -46,7 +47,7 @@ private:
 
     void eatSandwich(mutex & _muGui);
 
-    void work(mutex & _muGui);
+    void work(mutex & _muGui, ProductStockpille * productStockpille);
 
     Workplace *lookForWorkplace(vector<Workplace *> workplaces);
 

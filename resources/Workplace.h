@@ -51,14 +51,3 @@ private:
 
 
 #endif //FACTORY_THREAD_SIMULATION_WORKPLACE_H
-
-/*
-//int id;
-
-bool isTaken;
-
-int parts;
-
-std::string status;
-
-FactoryWorker usedBy = NULL;*/

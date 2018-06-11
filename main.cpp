@@ -6,6 +6,7 @@
 #include "resources/Tool.h"
 #include "gui/DrawGui.h"
 #include "threads/Courier.h"
+#include "threads/Orders.h"
 
 using namespace std;
 
@@ -64,7 +65,8 @@ int main() {
         }
     }
 
-
+    //
+    ProductStockpille *productStockpille = new ProductStockpille();
 
     //Creating mainStorage
     PartsStorage *ps = new PartsStorage();
@@ -77,7 +79,8 @@ int main() {
         tasks[i] = (thread(&FactoryWorker::routine,
                            f,
                            ref(workplaces),
-                           ref(_muGUI))
+                           ref(_muGUI),
+                           ref(productStockpille))
             );
     }
 
@@ -115,6 +118,13 @@ int main() {
             );
         }
     }
+
+    /*Orders *orders = new Orders();
+    for(int j = 0; j < 11; j++){
+        orders->routine();
+    }*/
+
+    //orders->routine();
 
     for(int i = 0; i < tasks.size();i++){
         tasks.at(i).join();

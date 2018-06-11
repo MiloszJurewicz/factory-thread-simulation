@@ -50,6 +50,13 @@ void drawSeparators(){
     for(int i = 0; i < collumns - RIGHTTABLEWIDTH;i++){
         mvprintw(10, i, "=");
     }
+
+    for(int i = 0; i < collumns - RIGHTTABLEWIDTH;i++){
+        mvprintw(rows - 10, i, "=");
+    }
+    for(int i = 0; i < collumns - RIGHTTABLEWIDTH;i++){
+        mvprintw(rows - 4, i, "=");
+    }
     refresh();
 }
 
@@ -141,39 +148,39 @@ void drawFactoryWorker(FactoryWorker* factoryWorker) {
 void drawCourier(Courier *courier) {
     attron(COLOR_PAIR(2));
     int rows = 0, collumns = 0;
-
+    int offset = 12;
     string title = "Courier id: " + to_string(courier->getId());
     string status = courier->getStatus() + ": " + to_string(courier->getProgress()) + " p";
     string workplace = "To workplace: " + to_string(courier->getCurrentWorkplace());
-    string clean((courier->getStatus() + "       ").size(), ' ');
+    string clean((courier->getStatus() + "         ").size(), ' ');
     string tmp = "To Workplace    ";
     string clean2(tmp.size(), ' ');
     getmaxyx(stdscr, rows, collumns);
     if(courier->getStatus() == "delivering parts"){
         if(courier->getId() % 2 == 0){
-            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, title.c_str());
-            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean.c_str());
-            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, status.c_str());
-            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean2.c_str());
-            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, workplace.c_str());
+            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, title.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, clean.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, status.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, clean2.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, workplace.c_str());
         }else{
-            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + 8, title.c_str());
-            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, clean.c_str());
-            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, status.c_str());
-            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, clean2.c_str());
-            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, workplace.c_str());
+            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + offset, title.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + offset, clean.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + offset, status.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + offset, clean2.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + offset, workplace.c_str());
         }
     }else{
         if(courier->getId() % 2 == 0){
-            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, title.c_str());
-            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean.c_str());
-            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, status.c_str());
-            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean2.c_str());
+            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, title.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, clean.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, status.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - offset, clean2.c_str());
         } else{
-            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + 8, title.c_str());
-            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, clean.c_str());
-            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, status.c_str());
-            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, clean2.c_str());
+            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + offset, title.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + offset, clean.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + offset, status.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + offset, clean2.c_str());
         }
     }
 
@@ -190,6 +197,47 @@ void drawPartsStorage(PartsStorage *partStorage) {
     mvprintw(rows/2, collumns/2 - sizeof(title)/2, title.c_str());
     mvprintw(rows/2 + 1, collumns/2 - sizeof("Parts: " + to_string(partStorage->getParts()))/2, ("Parts: " + to_string(partStorage->getParts())).c_str());
     refresh();
+}
+
+void drawProductStockPile(ProductStockpille *productStockpille) {
+    attron(COLOR_PAIR(2));
+    int rows = 0, collumns = 0;
+
+    string title = "Main part storage";
+    string productA = "Product 0: " + to_string(productStockpille->getProducts0());
+    string productB = "Product 1: " + to_string(productStockpille->getProducts1());
+    string productC = "Product 2: " + to_string(productStockpille->getProducts2());
+    string productD = "Product 3: " + to_string(productStockpille->getProducts3());
+
+    getmaxyx(stdscr, rows, collumns);
+
+    mvprintw(rows - 8, collumns/2 - sizeof(title)/2, title.c_str());
+    mvprintw(rows - 7, collumns/2 - sizeof(productA) - 5, productA.c_str());
+    mvprintw(rows - 7, collumns/2 + 5, productB.c_str());
+    mvprintw(rows - 5, collumns/2 - sizeof(productB) - 5, productC.c_str());
+    mvprintw(rows - 5, collumns/2 + 5, productD.c_str());
+
+    refresh();
+}
+
+void drawOrders(vector<array<int, 3>> orders){
+    attron(COLOR_PAIR(2));
+    int rows = 0, collumns = 0;
+
+    getmaxyx(stdscr, rows, collumns);
+    string ordersNames = "Orders: ";
+    string clean(RIGHTTABLEWIDTH, ' ');
+
+    for(int i = 0;i < orders.size();i++){
+
+        for(int j = 0; j < 3; j++){
+            ordersNames += to_string(orders.at(i).at(j)) + "," ;
+        }
+
+        ordersNames += " ; " ;
+    }
+    mvprintw(rows - 3, 0, clean.c_str());
+    mvprintw(rows - 3, 0, ordersNames.c_str());
 }
 
 
