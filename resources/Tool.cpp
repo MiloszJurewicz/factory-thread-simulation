@@ -9,6 +9,8 @@ Tool::Tool(int id) {
     this->id = id;
     this->status = "In toolshop";
     this->factoryWorker = NULL;
+
+    drawTool(this);
 }
 
 int Tool::getId() const {
@@ -17,6 +19,17 @@ int Tool::getId() const {
 
 void Tool::setFactoryWorker(FactoryWorker *factoryWorker) {
     Tool::factoryWorker = factoryWorker;
+
+    _muGUI.lock();
+    if(this->factoryWorker == NULL){
+        status = "In toolshop";
+        drawTool(this);
+
+    }else{
+        status = "Taken by: " + this->factoryWorker->getId();
+        drawTool(this);
+    }
+    _muGUI.unlock();
 }
 
 FactoryWorker *Tool::getFactoryWorker() const {

@@ -12,6 +12,8 @@ using namespace std;
 
 class FactoryWorker;
 
+extern mutex _muGUI;
+
 class Tool {
 public:
 

@@ -31,9 +31,10 @@ void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
 
 
     while(running){
-        //mutex here
+        _muGui.lock();
         workplace = lookForWorkplace(workplaces);
-        //end of mutex
+        _muGui.unlock();
+
         if(workplace != NULL){
 
             work(_muGui);
@@ -93,7 +94,7 @@ void FactoryWorker::work(mutex &_muGui) {
     }
     workplace->setTaken(false);
 
-    cout << "Factoryworker: " << id << "done" << endl;
+    //cout << "Factoryworker: " << id << "done" << endl;
 }
 
 void FactoryWorker::eatSandwich(mutex &_muGui) {

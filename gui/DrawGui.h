@@ -9,6 +9,7 @@
 #include "../threads/FactoryWorker.h"
 
 void initGui();
+void drawSeparators();
 void drawTool(Tool* t);
 //void drawFactoryWorker(FactoryWorker* factoryWorker);
 void drawWorkplace();
