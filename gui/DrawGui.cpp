@@ -67,45 +67,50 @@ void drawTool(Tool* t) {
         mvprintw(2, 0 + sizeof(msg) * t->getId(), ("Toold id. " + std::to_string(t->getId())).c_str());
         mvprintw(3, 0 + sizeof(msg) * t->getId(), blanks.c_str());
         mvprintw(3, 0 + sizeof(msg) * t->getId(), ("Status: " + t->getStatus()).c_str());
-
-
     }else if(t->getId() < 10){
         mvprintw(5, 0 + sizeof(msg) * (t->getId() - 5), ("Toold id. " + std::to_string(t->getId())).c_str());
         mvprintw(6, 0 + sizeof(msg) * (t->getId() - 5), blanks.c_str());
         mvprintw(6, 0 + sizeof(msg) * (t->getId() - 5), ("Status: " + t->getStatus()).c_str());
-    }else if(t->getId() < 15){
-        mvprintw(5, 0 + sizeof(msg) * (t->getId() - 10), ("Toold id. " + std::to_string(t->getId())).c_str());
-        mvprintw(6, 0 + sizeof(msg) * (t->getId() - 10), blanks.c_str());
-        mvprintw(6, 0 + sizeof(msg) * (t->getId() - 10), ("Status: " + t->getStatus()).c_str());
+    }else{
+        mvprintw(8, 0 + sizeof(msg) * (t->getId() - 10), ("Toold id. " + std::to_string(t->getId())).c_str());
+        mvprintw(9, 0 + sizeof(msg) * (t->getId() - 10), blanks.c_str());
+        mvprintw(9, 0 + sizeof(msg) * (t->getId() - 10), ("Status: " + t->getStatus()).c_str());
     }
-
     refresh();
-
 }
 
 void drawWorkplace(Workplace * w){
     attron(COLOR_PAIR(2));
-    std::string clean = "                              ";
     int rows = 0, collumns = 0;
 
     getmaxyx(stdscr, rows, collumns);
-    std::string msg= "Workplace id: " + std::to_string(w->getId());
-    std::string msgfree=  "Free        ";
-    std::string msgtaken= "taken by: " + std::to_string(w->getTakenBy());
+    string msg= "Workplace id: " + std::to_string(w->getId());
+    string msgfree=  "Free        ";
+    string msgtaken= "Taken by: " + std::to_string(w->getTakenBy());
+    string msgParts= "Parts: " + std::to_string(w->getParts());
+
+    string clean = "Parts:   ";
     if(w->getId() % 2 == 0){
         mvprintw(12 + w->getId() * 3, 0 , msg.c_str());
         if(w->getTakenBy() == -1){
             mvprintw(13 + w->getId() * 3, 0 , msgfree.c_str());
+            mvprintw(14 + w->getId() * 3, 0 , clean.c_str());
+            mvprintw(14 + w->getId() * 3, 0 , msgParts.c_str());
         }else{
             mvprintw(13 + w->getId() * 3, 0 , msgtaken.c_str());
+            mvprintw(14 + w->getId() * 3, 0 , clean.c_str());
+            mvprintw(14 + w->getId() * 3, 0 , msgParts.c_str());
         }
-
     }else{
         mvprintw(12 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ") , msg.c_str());
         if(w->getTakenBy() == -1){
             mvprintw(13 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , msgfree.c_str());
+            mvprintw(14 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , clean.c_str());
+            mvprintw(14 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , msgParts.c_str());
         }else{
             mvprintw(13 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , msgtaken.c_str());
+            mvprintw(14 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , clean.c_str());
+            mvprintw(14 + (w->getId() - 1) * 3, collumns - RIGHTTABLEWIDTH - sizeof(" Workplace id:      ")  , msgParts.c_str());
         }
     }
     refresh();
@@ -123,32 +128,67 @@ void drawFactoryWorker(FactoryWorker* factoryWorker) {
     std::string clean = "                       ";
 
     mvprintw(5 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), title.c_str());
-    if(factoryWorker->getStatus() == "working"){
+    if(factoryWorker->getStatus() == "working" || factoryWorker->getStatus() == "Eating sandwich"){
         mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), clean.c_str());
         mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), (status + ": " + to_string(factoryWorker->getProgress())).c_str());
     }else{
-
         mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), clean.c_str());
         mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), status.c_str());
+    }
+    refresh();
+}
 
+void drawCourier(Courier *courier) {
+    attron(COLOR_PAIR(2));
+    int rows = 0, collumns = 0;
+
+    string title = "Courier id: " + to_string(courier->getId());
+    string status = courier->getStatus() + ": " + to_string(courier->getProgress()) + " p";
+    string workplace = "To workplace: " + to_string(courier->getCurrentWorkplace());
+    string clean((courier->getStatus() + "       ").size(), ' ');
+    string tmp = "To Workplace    ";
+    string clean2(tmp.size(), ' ');
+    getmaxyx(stdscr, rows, collumns);
+    if(courier->getStatus() == "delivering parts"){
+        if(courier->getId() % 2 == 0){
+            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, title.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, status.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean2.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, workplace.c_str());
+        }else{
+            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + 8, title.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, clean.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, status.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, clean2.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, workplace.c_str());
+        }
+    }else{
+        if(courier->getId() % 2 == 0){
+            mvprintw(rows/2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, title.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean.c_str());
+            mvprintw(rows/2 + 1 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, status.c_str());
+            mvprintw(rows/2 + 2 + courier->getId() * 4, collumns/2 - sizeof(title) - 8, clean2.c_str());
+        } else{
+            mvprintw(rows/2 + (courier->getId() - 1) * 4, collumns/2  + 8, title.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, clean.c_str());
+            mvprintw(rows/2 + 1 + (courier->getId() - 1) * 4, collumns/2  + 8, status.c_str());
+            mvprintw(rows/2 + 2 + (courier->getId() - 1) * 4, collumns/2  + 8, clean2.c_str());
+        }
     }
 
-    /*if(factoryWorker->getStatus() == "Eating sandwich" || factoryWorker->getStatus() == "Looking for workplace" || factoryWorker->getStatus() == "Starting work"){
 
-        mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), status.c_str());
-    }else if(factoryWorker->getStatus() == "working"){
-        mvprintw(5 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), title.c_str());
-        mvprintw(6 + factoryWorker->getId() * 4, collumns - sizeof(" Factory worker id:   "), status.c_str());
-    }*/
+    refresh();
+}
 
-    /*if(factoryWorker->getId() % 2 == 0){
-        mvprintw(6 + factoryWorker->getId() * 4, 0 , ("Worker id. " + std::to_string(factoryWorker->getId())).c_str());
-        mvprintw(6 + factoryWorker->getId() * 4 + 1, 0 , ("Worker status. " + factoryWorker->getStatus()).c_str());
-    } else{
-        mvprintw(6 + (factoryWorker->getId() - 1) * 4, collumns - sizeof(msg), ("Worker id. " + std::to_string(factoryWorker->getId())).c_str());
-        mvprintw(6 + (factoryWorker->getId() - 1) * 4 + 1, collumns - sizeof(msg), ("Worker id. " + factoryWorker->getStatus()).c_str());
-    }*/
+void drawPartsStorage(PartsStorage *partStorage) {
+    attron(COLOR_PAIR(2));
+    int rows = 0, collumns = 0;
 
+    string title = "Main part storage";
+    getmaxyx(stdscr, rows, collumns);
+    mvprintw(rows/2, collumns/2 - sizeof(title)/2, title.c_str());
+    mvprintw(rows/2 + 1, collumns/2 - sizeof("Parts: " + to_string(partStorage->getParts()))/2, ("Parts: " + to_string(partStorage->getParts())).c_str());
     refresh();
 }
 

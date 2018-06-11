@@ -20,7 +20,7 @@ extern const std::chrono::milliseconds REFRESHRATE;
 class FactoryWorker {
 public:
 
-    FactoryWorker(int id);
+    explicit FactoryWorker(int id);
 
     virtual ~FactoryWorker();
 
@@ -28,17 +28,19 @@ public:
 
     int getId() const;
 
-    int id;
-
     const string &getStatus() const;
 
-    float getProgress() const;
+    int getProgress() const;
 
 private:
+
+    int id;
 
     string status;
 
     bool running;
+
+    int progress = 0;
 
     Workplace *workplace = NULL;
 
@@ -46,11 +48,7 @@ private:
 
     void work(mutex & _muGui);
 
-    float progress = 0;
-
-    FactoryWorker *getFactoryWorker() const;
-
-    Workplace *lookForWorkplace(vector<Workplace *> workplaces) ;
+    Workplace *lookForWorkplace(vector<Workplace *> workplaces);
 
 };
 

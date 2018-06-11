@@ -13,13 +13,14 @@ Workplace::Workplace(int id, const vector<Tool *> &tools) : id(id), tools(tools)
     drawWorkplace(this);
 }
 
+const vector<Tool *> &Workplace::getTools() const {
+    return tools;
+}
+
 int Workplace::getId() const {
     return id;
 }
 
-const vector<Tool *> &Workplace::getTools() const {
-    return tools;
-}
 
 bool Workplace::isTaken() const {
     return taken;
@@ -35,4 +36,12 @@ int Workplace::getTakenBy() const {
 
 void Workplace::setTakenBy(int takenBy) {
     Workplace::takenBy = takenBy;
+}
+
+int Workplace::getParts() const {
+    return parts;
+}
+
+void Workplace::setParts(int parts) {
+    Workplace::parts = parts;
 }

@@ -7,10 +7,16 @@
 
 #include "../resources/Tool.h"
 #include "../threads/FactoryWorker.h"
+#include "../threads/Courier.h"
+#include "../resources/PartsStorage.h"
+
+class Courier;
 
 void initGui();
 void drawSeparators();
 void drawTool(Tool* t);
 void drawFactoryWorker(FactoryWorker* factoryWorker);
 void drawWorkplace(Workplace * w);
+void drawCourier(Courier * courier);
+void drawPartsStorage(PartsStorage * partStorage);
 #endif //FACTORY_THREAD_SIMULATION_DRAWGUI_H

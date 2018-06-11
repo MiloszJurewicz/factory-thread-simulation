@@ -17,9 +17,11 @@ public:
 
     Workplace(int id, const vector<Tool *> &tools);
 
-    int getId() const;
+    mutex _muPartsAccess;
 
     const vector<Tool *> &getTools() const;
+
+    int getId() const;
 
     bool isTaken() const;
 
@@ -29,13 +31,19 @@ public:
 
     void setTakenBy(int takenBy);
 
+    int getParts() const;
+
+    void setParts(int parts);
+
 private:
 
     int id;
 
-    bool taken;
-
     int takenBy = -1;
+
+    int parts = 20;
+
+    bool taken;
 
     vector<Tool*> tools;
 

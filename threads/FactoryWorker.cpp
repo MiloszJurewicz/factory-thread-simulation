@@ -12,8 +12,6 @@ using namespace std;
 
 FactoryWorker::FactoryWorker(int id) : id(id) {
     running = true;
-
-
 }
 
 FactoryWorker::~FactoryWorker() {
@@ -24,16 +22,12 @@ FactoryWorker::~FactoryWorker() {
     }
 }
 
-int FactoryWorker::getId() const {
-    return id;
-}
-
 void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
     //starting work
     status = "Starting work";
 
     _muGui.lock();
-    //drawFactoryWorker(this);
+    drawFactoryWorker(this);
     _muGui.unlock();
 
     while(running){
@@ -56,8 +50,6 @@ void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui) {
             eatSandwich(_muGui);
         }
     }
-
-
 }
 
 Workplace* FactoryWorker::lookForWorkplace(vector<Workplace *> workplaces) {
@@ -79,16 +71,14 @@ Workplace* FactoryWorker::lookForWorkplace(vector<Workplace *> workplaces) {
         freeWorkplaces.at(c)->setTaken(true);
         return freeWorkplaces.at(c);
     }
-
-
 }
 
 void FactoryWorker::work(mutex &_muGui) {
-
-    _muGui.lock();
+    
     status = "Getting tools";
-    //Draw Worker
-    drawFactoryWorker(this);
+    
+    _muGui.lock();     
+        drawFactoryWorker(this);
     _muGui.unlock();
 
     //Ensures there are no deadlocks
@@ -96,37 +86,57 @@ void FactoryWorker::work(mutex &_muGui) {
 
     //Draw pick up tool
     lock_guard<mutex> a(workplace->getTools().at(0)->m, adopt_lock);
-    //setting each tools parameters
-    workplace->getTools().at(0)->setClaimedBy(id);
-    workplace->getTools().at(0)->setStatus("Claimed by: " + to_string(id));
-    //and drawing it
-    drawTool(workplace->getTools().at(0));
 
-    lock_guard<mutex> b(workplace->getTools().at(1)->m, adopt_lock);
-    //setting each tools parameters
-    workplace->getTools().at(1)->setClaimedBy(id);
-    workplace->getTools().at(1)->setStatus("Claimed by: " + to_string(id));
-    //and drawing it
-    drawTool(workplace->getTools().at(1));
-
-    lock_guard<mutex> c(workplace->getTools().at(2)->m, adopt_lock);
-    //setting each tools parameters
-    workplace->getTools().at(2)->setClaimedBy(id);
-    workplace->getTools().at(2)->setStatus("Claimed by: " + to_string(id));
-    //and drawing it
-    drawTool(workplace->getTools().at(2));
-
-    status = "working";
-    progress = 0;
-    int workingTime = 3 + (rand() % (6 - 3 + 1));
-    for(int i = 0; i < workingTime * REFRESHESINSECOND; i++){
-        this_thread::sleep_for(REFRESHRATE);
-
-        progress =  floorf(float(i) / float(workingTime * REFRESHESINSECOND) * 100 ) ;
-
+        workplace->getTools().at(0)->setClaimedBy(id);
+        workplace->getTools().at(0)->setStatus("Claimed by: " + to_string(id));
+    
         _muGui.lock();
-        drawFactoryWorker(this);
+        drawTool(workplace->getTools().at(0));
         _muGui.unlock();
+    lock_guard<mutex> b(workplace->getTools().at(1)->m, adopt_lock);
+
+        workplace->getTools().at(1)->setClaimedBy(id);
+        workplace->getTools().at(1)->setStatus("Claimed by: " + to_string(id));
+     _muGui.lock();
+        drawTool(workplace->getTools().at(1));
+        _muGui.unlock();    
+    
+    lock_guard<mutex> c(workplace->getTools().at(2)->m, adopt_lock);
+
+        workplace->getTools().at(2)->setClaimedBy(id);
+        workplace->getTools().at(2)->setStatus("Claimed by: " + to_string(id));
+    
+        _muGui.lock();
+        drawTool(workplace->getTools().at(2));
+        _muGui.unlock();
+    status = "working";
+    int partsPerProduct = 10;
+
+    for(int i = 0; i < partsPerProduct; i++){
+
+        if(workplace->getParts() == 0){
+            status = "Waiting";
+            _muGui.lock();
+            drawFactoryWorker(this);
+            _muGui.unlock();
+            while(workplace->getParts() == 0){
+                this_thread::sleep_for(REFRESHRATE * 5);
+
+            }
+        }else{
+            this_thread::sleep_for(REFRESHRATE);
+            progress =  floor(float(i) / float(partsPerProduct) * 100 );
+
+            workplace->_muPartsAccess.lock();
+            workplace->setParts(workplace->getParts() - 1);
+            workplace->_muPartsAccess.unlock();
+
+            _muGui.lock();
+            drawWorkplace(workplace);
+            drawFactoryWorker(this);
+            _muGui.unlock();
+        }
+
     }
 
     //freeing up resources
@@ -145,30 +155,32 @@ void FactoryWorker::work(mutex &_muGui) {
         _muGui.unlock();
     }
     workplace = nullptr;
-
-
 }
 
 void FactoryWorker::eatSandwich(mutex &_muGui) {
     status = "Eating sandwich";
-    int meditateTime = 3 + (rand() % /*static_cast<int>*/(5 - 3 + 1));
+    int eatingTime = 3 + (rand() % /*static_cast<int>*/(5 - 3 + 1));
 
 
-    for(int i = 0; i < meditateTime * REFRESHESINSECOND; i++){
+    for(int i = 0; i < eatingTime * REFRESHESINSECOND; i++){
         std::this_thread::sleep_for(REFRESHRATE);
 
         _muGui.lock();
+        progress = std::floor(float(i) / float(eatingTime * REFRESHESINSECOND) * 100 )  ;
         drawFactoryWorker(this);
         _muGui.unlock();
     }
+}
 
+int FactoryWorker::getId() const {
+    return id;
 }
 
 const string &FactoryWorker::getStatus() const {
     return status;
 }
 
-float FactoryWorker::getProgress() const {
+int FactoryWorker::getProgress() const {
     return progress;
 }
 
