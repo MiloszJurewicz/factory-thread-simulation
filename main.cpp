@@ -12,7 +12,7 @@ using namespace std;
 
 const int NUMOFWORKERS = 4;
 const int NUMOFWORKPLACES = 4;
-const int NUMOFTOOLS = NUMOFWORKERS * 2;
+const int NUMOFTOOLS = NUMOFWORKPLACES * 2;
 const int MILISECONDS = 500;
 const std::chrono::milliseconds REFRESHRATE(MILISECONDS);
 const int REFRESHESINSECOND= 1000/MILISECONDS;
@@ -54,16 +54,16 @@ int main() {
 
         vector<Tool*> subTools;
         if(i == NUMOFWORKPLACES - 1){
-            subTools.push_back( tools.at(i) );
-            subTools.push_back( tools.at(i + 1) );
+            subTools.push_back( tools.at(i * 2) );
+            subTools.push_back( tools.at(i * 2 + 1) );
             subTools.push_back( tools.at(0) );
 
             Workplace *w = new Workplace(i, subTools);
             workplaces.push_back(w);
         }else{
-            subTools.push_back( tools.at(i) );
-            subTools.push_back( tools.at(i + 1) );
-            subTools.push_back( tools.at(i + 2) );
+            subTools.push_back( tools.at(i * 2) );
+            subTools.push_back( tools.at(i * 2 + 1) );
+            subTools.push_back( tools.at(i * 2 + 2) );
 
             Workplace *w = new Workplace(i, subTools);
             workplaces.push_back(w);
@@ -71,7 +71,7 @@ int main() {
     }
 
     vector<thread> tasks(NUMOFWORKERS);
-/*
+
     for(int i = 0; i < NUMOFWORKERS; i++){
         FactoryWorker *f = new FactoryWorker(i);
 
@@ -85,9 +85,8 @@ int main() {
 
     for(int i = 0; i < tasks.size();i++){
         tasks.at(i).join();
-    }*/
-    FactoryWorker *fn = new FactoryWorker(6);
-    tools.at(0)->setFactoryWorker(fn);
+    }
+
 
     getch();
 

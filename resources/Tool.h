@@ -23,9 +23,9 @@ public:
 
     int getId() const;
 
-    void setFactoryWorker(FactoryWorker *factoryWorker);
+    int getClaimedBy() const;
 
-    FactoryWorker *getFactoryWorker() const;
+    void setClaimedBy(int claimedBy);
 
     const string &getStatus() const;
 
@@ -35,9 +35,9 @@ private:
 
     int id;
 
-    string status;
+    int claimedBy;
 
-    FactoryWorker* factoryWorker = NULL;
+    string status;
 };
 
 #endif //FACTORY_THREAD_SIMULATION_TOOL_H

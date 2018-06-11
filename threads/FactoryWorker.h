@@ -28,9 +28,16 @@ public:
 
     int getId() const;
 
-private:
     int id;
+
+    const string &getStatus() const;
+
+    float getProgress() const;
+
+private:
+
     string status;
+
     bool running;
 
     Workplace *workplace = NULL;
@@ -38,6 +45,8 @@ private:
     void eatSandwich(mutex & _muGui);
 
     void work(mutex & _muGui);
+
+    float progress = 0;
 
     FactoryWorker *getFactoryWorker() const;
 

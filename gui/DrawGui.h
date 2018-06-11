@@ -11,6 +11,6 @@
 void initGui();
 void drawSeparators();
 void drawTool(Tool* t);
-//void drawFactoryWorker(FactoryWorker* factoryWorker);
-void drawWorkplace();
+void drawFactoryWorker(FactoryWorker* factoryWorker);
+void drawWorkplace(Workplace * w);
 #endif //FACTORY_THREAD_SIMULATION_DRAWGUI_H

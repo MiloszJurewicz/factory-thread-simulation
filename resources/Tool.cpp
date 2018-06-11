@@ -8,7 +8,6 @@
 Tool::Tool(int id) {
     this->id = id;
     this->status = "In toolshop";
-    this->factoryWorker = NULL;
 
     drawTool(this);
 }
@@ -17,24 +16,6 @@ int Tool::getId() const {
     return id;
 }
 
-void Tool::setFactoryWorker(FactoryWorker *factoryWorker) {
-    Tool::factoryWorker = factoryWorker;
-
-    _muGUI.lock();
-    if(this->factoryWorker == NULL){
-        status = "In toolshop";
-        drawTool(this);
-
-    }else{
-        status = "Taken by: " + this->factoryWorker->getId();
-        drawTool(this);
-    }
-    _muGUI.unlock();
-}
-
-FactoryWorker *Tool::getFactoryWorker() const {
-    return factoryWorker;
-}
 
 const string &Tool::getStatus() const {
     return status;
@@ -42,5 +23,13 @@ const string &Tool::getStatus() const {
 
 void Tool::setStatus(const string &status) {
     Tool::status = status;
+}
+
+int Tool::getClaimedBy() const {
+    return claimedBy;
+}
+
+void Tool::setClaimedBy(int claimedBy) {
+    Tool::claimedBy = claimedBy;
 }
 

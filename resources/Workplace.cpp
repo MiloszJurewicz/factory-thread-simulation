@@ -9,6 +9,8 @@ using namespace std;
 
 Workplace::Workplace(int id, const vector<Tool *> &tools) : id(id), tools(tools) {
     this->taken = false;
+
+    drawWorkplace(this);
 }
 
 int Workplace::getId() const {
@@ -25,4 +27,12 @@ bool Workplace::isTaken() const {
 
 void Workplace::setTaken(bool taken) {
     Workplace::taken = taken;
+}
+
+int Workplace::getTakenBy() const {
+    return takenBy;
+}
+
+void Workplace::setTakenBy(int takenBy) {
+    Workplace::takenBy = takenBy;
 }

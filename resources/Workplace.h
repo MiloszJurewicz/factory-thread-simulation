@@ -25,13 +25,17 @@ public:
 
     void setTaken(bool taken);
 
+    int getTakenBy() const;
+
+    void setTakenBy(int takenBy);
+
 private:
 
     int id;
 
     bool taken;
 
-    FactoryWorker* fw = NULL;
+    int takenBy = -1;
 
     vector<Tool*> tools;
 
