@@ -41,7 +41,7 @@ void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui, Prod
 
         _muGui.unlock();
 
-        if(workplace != NULL){
+        if(workplace != nullptr){
 
             work(_muGui, productStockpille );
 
@@ -51,6 +51,12 @@ void FactoryWorker::routine(vector<Workplace *> workplaces, mutex & _muGui, Prod
             eatSandwich(_muGui);
         }
     }
+
+    status = "going home";
+
+    _muGui.lock();
+    drawFactoryWorker(this);
+    _muGui.unlock();
 }
 
 Workplace* FactoryWorker::lookForWorkplace(vector<Workplace *> workplaces) {
@@ -197,6 +203,10 @@ const string &FactoryWorker::getStatus() const {
 
 int FactoryWorker::getProgress() const {
     return progress;
+}
+
+void FactoryWorker::setRunning(bool running) {
+    FactoryWorker::running = running;
 }
 
 

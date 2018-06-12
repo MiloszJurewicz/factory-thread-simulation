@@ -5,8 +5,6 @@
 #include <random>
 #include "Orders.h"
 #include "../gui/DrawGui.h"
-#include <array>
-#include <iostream>
 #include <thread>
 
 //using namespace std;
@@ -14,7 +12,7 @@
 
 
 
-void Orders::generateOrders(mutex &_muGui, ProductStockpille * productStockpille) {
+void Orders::generateOrders(mutex &_muGui) {
 
     status = "generating orders";
     int eatingTime = 3 + (rand() % (4 - 3 + 1));
@@ -53,12 +51,15 @@ void Orders::routine(mutex &_muGui, ProductStockpille * productStockpille) {
         drawOrders(this);
     _muGui.unlock();
     while(running){
-        generateOrders(_muGui, productStockpille);
+        generateOrders(_muGui);
 
         checkOrders(_muGui, productStockpille);
     }
 
-
+    status = "going home";
+    _muGui.lock();
+        drawOrders(this);
+    _muGui.unlock();
 
 }
 
@@ -105,11 +106,11 @@ void Orders::checkOrders(mutex &_muGui, ProductStockpille * productStockpille) {
             status = "Packing order: " + to_string(completingOrder);
 
             int eatingTime = 3 + (rand() % (10 - 3 + 1));
-            for(int i = 0; i < eatingTime * REFRESHESINSECOND; i++){
+            for(int z = 0; z < eatingTime * REFRESHESINSECOND; z++){
                 std::this_thread::sleep_for(REFRESHRATE);
 
                 _muGui.lock();
-                progress = std::floor(float(i) / float(eatingTime * REFRESHESINSECOND) * 100 )  ;
+                progress = std::floor(float(z) / float(eatingTime * REFRESHESINSECOND) * 100 )  ;
                 drawOrders(this);
                 _muGui.unlock();
             }
@@ -141,4 +142,8 @@ const vector<array<int, 3>> &Orders::getOrders() const {
 
 const string &Orders::getStatus() const {
     return status;
+}
+
+void Orders::setRunning(bool running) {
+    Orders::running = running;
 }

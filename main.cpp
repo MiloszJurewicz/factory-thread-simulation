@@ -5,8 +5,6 @@
 #include <curses.h>
 #include "resources/Tool.h"
 #include "gui/DrawGui.h"
-#include "threads/Courier.h"
-#include "threads/Orders.h"
 
 using namespace std;
 
@@ -20,22 +18,10 @@ const std::chrono::milliseconds REFRESHRATE(MILISECONDS);
 const int REFRESHESINSECOND= 1000/MILISECONDS;
 mutex _muGUI;
 
-void stopThreadsTimer(vector<FactoryWorker *> workers){
-
-    //coment out getch and uncomment timer for it to work for given amount of time
-    //for some reason u have to press getch twice for program to close (???)
-    //std::this_thread::sleep_for(runTimer);
-    //getch();
-
-    /*for(int i = 0; i < workers.size(); i++){
-        workers.at(i)->setIsRunning(false);
-    }*/
-}
-
 int main() {
 
     //init gui and pseudo random
-    srand (time(NULL));
+    srand (time(nullptr));
     initGui();
 
     //Resources
@@ -86,17 +72,22 @@ int main() {
         }
     }
 
-    //threads
-    vector<thread> tasks(NUMOFWORKERS);
-    vector<thread> ordersList(NUMOFORDERS);
-    vector<thread> couries(NUMOFCOURIERS);
+    //threads + lists of objects
+    vector<thread> factoryWorkersThreads(NUMOFWORKERS);
+    vector<FactoryWorker*> factoryWorkers;
 
+    vector<thread> ordersThreads(NUMOFORDERS);
+    vector<Orders*> ordersList;
+
+    vector<thread> couriesThreads(NUMOFCOURIERS);
+    vector<Courier*> couriers;
 
     //threads of workers each gets all workplaces
     for(int i = 0; i < NUMOFWORKERS; i++){
         FactoryWorker *f = new FactoryWorker(i);
+        factoryWorkers.push_back(f);
 
-        tasks[i] = (thread(&FactoryWorker::routine,
+        factoryWorkersThreads[i] = (thread(&FactoryWorker::routine,
                            f,
                            ref(workplaces),
                            ref(_muGUI),
@@ -107,8 +98,9 @@ int main() {
     //orderds
     for(int i = 0; i < NUMOFORDERS; i++){
         Orders *o = new Orders();
+        ordersList.push_back(o);
 
-        ordersList[i] = (thread(&Orders::routine,
+        ordersThreads[i] = (thread(&Orders::routine,
                                  o,
                                  ref(_muGUI),
                                  ref(productStockpille))
@@ -119,16 +111,17 @@ int main() {
     //creating courier threads
     for(int i = 0; i < NUMOFCOURIERS; i++){
         Courier *c = new Courier(i);
+        couriers.push_back(c);
 
         if(i % 2 == 0){
-            couries[i] = (thread(&Courier::routine,
+            couriesThreads[i] = (thread(&Courier::routine,
                                  c,
                                  ref(subWorkplacesEven),
                                  ref(_muGUI),
                                  ref(ps))
             );
         }else{
-            couries[i] = (thread(&Courier::routine,
+            couriesThreads[i] = (thread(&Courier::routine,
                                  c,
                                  ref(subWorkplaceOdd),
                                  ref(_muGUI),
@@ -139,18 +132,31 @@ int main() {
 
     //end condition(getch();)
     getch();
+    //sending close signal
+    for(int i = 0; i < factoryWorkers.size(); i++){
+        factoryWorkers.at(i)->setRunning(false);
+    }
+
+    for(int i = 0; i < couriers.size(); i++){
+        couriers.at(i)->setRunning(false);
+    }
+
+    for(int i = 0; i < ordersList.size(); i++){
+        ordersList.at(i)->setRunning(false);
+    }
 
     //joining everything
-    for(int i = 0; i < tasks.size();i++){
-        tasks.at(i).join();
+    for(int i = 0; i < factoryWorkersThreads.size();i++){
+
+        factoryWorkersThreads.at(i).join();
     }
 
-    for(int i = 0; i < couries.size();i++){
-        couries.at(i).join();
+    for(int i = 0; i < couriesThreads.size();i++){
+        couriesThreads.at(i).join();
     }
 
-    for(int i; i < ordersList.size(); i++){
-        ordersList.at(i).join();
+    for(int i = 0; i < ordersThreads.size(); i++){
+        ordersThreads.at(i).join();
     }
 
 

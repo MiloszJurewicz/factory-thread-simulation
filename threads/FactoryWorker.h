@@ -33,6 +33,8 @@ public:
 
     int getProgress() const;
 
+    void setRunning(bool running);
+
 private:
 
     int id;
@@ -43,7 +45,7 @@ private:
 
     int progress = 0;
 
-    Workplace *workplace = NULL;
+    Workplace *workplace = nullptr;
 
     void eatSandwich(mutex & _muGui);
 

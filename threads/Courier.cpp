@@ -29,6 +29,11 @@ void Courier::routine(vector<Workplace*> workplaces, mutex &_muGui, PartsStorage
         
         breakTime(_muGui);
     }
+
+    status = "going home";
+    _muGui.lock();
+        drawCourier(this);
+    _muGui.unlock();
 }
 
 void Courier::stockUp(mutex &_muGui, PartsStorage * partsStorage) {
@@ -124,6 +129,10 @@ int Courier::getProgress() const {
 
 int Courier::getCurrentWorkplace() const {
    return currentWorkplace;
+}
+
+void Courier::setRunning(bool running) {
+    Courier::running = running;
 }
 
 

@@ -19,12 +19,12 @@ public:
 
     const string &getStatus() const;
 
+    void setRunning(bool running);
+
 private:
     bool running = true;
 
     int maxOrders = 10;
-
-    int numOfOrders = 0;
 
     string status;
 
@@ -32,7 +32,7 @@ private:
 
     int completingOrder;
 
-    void generateOrders(mutex &_muGui, ProductStockpille * productStockpille);
+    void generateOrders(mutex &_muGui);
 
     void checkOrders(mutex &_muGui, ProductStockpille * productStockpille);
 

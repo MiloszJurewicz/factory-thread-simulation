@@ -27,6 +27,8 @@ public:
 
     int getCurrentWorkplace() const;
 
+    void setRunning(bool running);
+
 private:
     int id;
 
