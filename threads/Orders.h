@@ -15,12 +15,22 @@ public:
 
     void routine(mutex &_muGui, ProductStockpille * productStockpille);
 
+    const vector<array<int, 3>> &getOrders() const;
+
+    const string &getStatus() const;
+
 private:
-    bool running;
+    bool running = true;
 
     int maxOrders = 10;
 
     int numOfOrders = 0;
+
+    string status;
+
+    int progress;
+
+    int completingOrder;
 
     void generateOrders(mutex &_muGui, ProductStockpille * productStockpille);
 

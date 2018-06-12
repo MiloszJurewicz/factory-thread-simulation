@@ -220,24 +220,28 @@ void drawProductStockPile(ProductStockpille *productStockpille) {
     refresh();
 }
 
-void drawOrders(vector<array<int, 3>> orders){
+void drawOrders(Orders * orders){
     attron(COLOR_PAIR(2));
     int rows = 0, collumns = 0;
 
     getmaxyx(stdscr, rows, collumns);
     string ordersNames = "Orders: ";
-    string clean(RIGHTTABLEWIDTH, ' ');
+    string status = orders->getStatus();
+    string clean( collumns - RIGHTTABLEWIDTH, ' ');
 
-    for(int i = 0;i < orders.size();i++){
+    mvprintw(rows - 3, 0, clean.c_str());
+    mvprintw(rows - 3, 0, status.c_str());
+
+    for(int i = 0;i < orders->getOrders().size();i++){
 
         for(int j = 0; j < 3; j++){
-            ordersNames += to_string(orders.at(i).at(j)) + "," ;
+            ordersNames += to_string(orders->getOrders().at(i).at(j)) + "," ;
         }
 
         ordersNames += " ; " ;
     }
-    mvprintw(rows - 3, 0, clean.c_str());
-    mvprintw(rows - 3, 0, ordersNames.c_str());
+    mvprintw(rows - 2, 0, clean.c_str());
+    mvprintw(rows - 2, 0, ordersNames.c_str());
 }
 
 

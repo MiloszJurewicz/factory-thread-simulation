@@ -9,6 +9,7 @@
 #include "../threads/FactoryWorker.h"
 #include "../threads/Courier.h"
 #include "../resources/PartsStorage.h"
+#include "../threads/Orders.h"
 
 class Courier;
 
@@ -20,5 +21,5 @@ void drawWorkplace(Workplace * w);
 void drawCourier(Courier * courier);
 void drawPartsStorage(PartsStorage * partStorage);
 void drawProductStockPile(ProductStockpille * productStockpille);
-void drawOrders(vector<array<int, 3>> orders);
+void drawOrders(Orders * orders);
 #endif //FACTORY_THREAD_SIMULATION_DRAWGUI_H

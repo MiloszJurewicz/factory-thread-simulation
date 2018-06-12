@@ -14,6 +14,7 @@ const int NUMOFWORKERS = 4;
 const int NUMOFWORKPLACES = 4;
 const int NUMOFTOOLS = NUMOFWORKPLACES * 2;
 const int NUMOFCOURIERS = 2;
+const int NUMOFORDERS = 1; // must  be 1 not fully thread safe and printing not implemented
 const int MILISECONDS = 250;
 const std::chrono::milliseconds REFRESHRATE(MILISECONDS);
 const int REFRESHESINSECOND= 1000/MILISECONDS;
@@ -33,9 +34,11 @@ void stopThreadsTimer(vector<FactoryWorker *> workers){
 
 int main() {
 
+    //init gui and pseudo random
     srand (time(NULL));
     initGui();
 
+    //Resources
     //Vector of tool pointers
     vector<Tool*> tools;
     for(int i = 0; i < NUMOFTOOLS; i++){
@@ -65,13 +68,30 @@ int main() {
         }
     }
 
-    //
+    //Stockpile
     ProductStockpille *productStockpille = new ProductStockpille();
 
     //Creating mainStorage
     PartsStorage *ps = new PartsStorage();
 
+    //subvector of workplaces, each curier gets half of workplaces
+    vector<Workplace*> subWorkplacesEven;
+    vector<Workplace*> subWorkplaceOdd;
+
+    for(int i = 0; i < workplaces.size();i++){
+        if(workplaces.at(i)->getId() % 2 == 0){
+            subWorkplacesEven.push_back(workplaces.at(i));
+        }else{
+            subWorkplaceOdd.push_back(workplaces.at(i));
+        }
+    }
+
+    //threads
     vector<thread> tasks(NUMOFWORKERS);
+    vector<thread> ordersList(NUMOFORDERS);
+    vector<thread> couries(NUMOFCOURIERS);
+
+
     //threads of workers each gets all workplaces
     for(int i = 0; i < NUMOFWORKERS; i++){
         FactoryWorker *f = new FactoryWorker(i);
@@ -84,19 +104,17 @@ int main() {
             );
     }
 
-    vector<thread> couries(NUMOFCOURIERS);
-    vector<Workplace*> subWorkplacesEven;
-    vector<Workplace*> subWorkplaceOdd;
+    //orderds
+    for(int i = 0; i < NUMOFORDERS; i++){
+        Orders *o = new Orders();
 
-    //subvector of workplaces, each curier gets half of workplaces
-    for(int i = 0; i < workplaces.size();i++){
-        if(workplaces.at(i)->getId() % 2 == 0){
-            subWorkplacesEven.push_back(workplaces.at(i));
-        }else{
-            subWorkplaceOdd.push_back(workplaces.at(i));
-        }
+        ordersList[i] = (thread(&Orders::routine,
+                                 o,
+                                 ref(_muGUI),
+                                 ref(productStockpille))
+        );
+
     }
-
 
     //creating courier threads
     for(int i = 0; i < NUMOFCOURIERS; i++){
@@ -119,13 +137,10 @@ int main() {
         }
     }
 
-    /*Orders *orders = new Orders();
-    for(int j = 0; j < 11; j++){
-        orders->routine();
-    }*/
+    //end condition(getch();)
+    getch();
 
-    //orders->routine();
-
+    //joining everything
     for(int i = 0; i < tasks.size();i++){
         tasks.at(i).join();
     }
@@ -134,8 +149,12 @@ int main() {
         couries.at(i).join();
     }
 
+    for(int i; i < ordersList.size(); i++){
+        ordersList.at(i).join();
+    }
 
-    getch();
+
+
 
     curs_set(FALSE);
     endwin();
